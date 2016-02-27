@@ -225,10 +225,16 @@ public class ElevensBoard
 	public boolean isLegal(List<Integer> selectedCards) 
    {
 		
-		if(containsPairSum11(selectedCards)&& containsJQK(selectedCards) == true)
-			return true;
-		else 
+		if (selectedCards.size() == 1) {
 			return false;
+		}
+		else if (selectedCards.size() == 2) {
+			return this.containsPairSum11(selectedCards);
+		}
+		else if (selectedCards.size() == 3) {
+			return this.containsJQK(selectedCards);
+		}
+		else return false;
 	}
 
 	/**
@@ -239,17 +245,42 @@ public class ElevensBoard
 	 * @return true if there is a legal play left on the board;
 	 *         false otherwise.
 	 */
-	public boolean anotherPlayIsPossible() 
-   {
-		/*for (int k = 0; k < cards.length; k++)
-			if (cards[k].pointValue() + cards[k+1].pointValue() != 11) 
-				return false;
-			else 
-				return true;
-		/* *** TO BE IMPLEMENTED IN EXPERIMENT ?? *** */
-      return true;
+	public boolean anotherPlayIsPossible(){
+	boolean jackPiece = false;
+	boolean queenPiece = false;
+	boolean kingPiece = false;
+	//Jack Queen and King Check
+	for (Card card: cards) {
+		if (card != null) {
+			if (card.rank().equals("jack")) 
+				jackPiece = true;
+			if (card.rank().equals("queen")) 
+				queenPiece = true;
+			if (card.rank().equals("king")) 
+				kingPiece = true;
+		}
 	}
-   
+	
+	if (jackPiece && queenPiece && kingPiece) 
+		return true;
+	
+	//Checks for pair sums		
+	for (Card card : cards) { 
+		int value = 0;
+		if (card != null) {
+			value = card.pointValue();  
+			for (Card cards1 : cards) {
+				if (cards1 != null) {
+					if (cards1.pointValue() + value == 11) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+			
+	return false;
+}
    
    ////////////////////////////////////////////////////////////////////////////////////////////////////
    ////// DO NOT CHANGE ANY METHODS ABOVE THIS LINE.
@@ -270,8 +301,13 @@ public class ElevensBoard
 	private boolean containsPairSum11(List<Integer> selectedCards) 
    {
 		/* *** TO BE IMPLEMENTED IN EXPERIMENT03 *** */
-		for(int k = 0; k < selectedCards.size(); k++)
-			if(cards[selectedCards.get(k)].pointValue() + cards[selectedCards.get(k+1)].pointValue() == 11)
+		int sumCards = 0;
+		int numCards = 0;
+		for(int k = 0; k < selectedCards.size(); k++){
+			sumCards += cards[selectedCards.get(k)].pointValue();
+			numCards ++;
+			}
+		if (sumCards == 11 && numCards ==2)
 			return true;
 		return false;
 		
@@ -287,18 +323,19 @@ public class ElevensBoard
 	 */
 	private boolean containsJQK(List<Integer> selectedCards) 
    {
-		for(int k = 0; k < selectedCards.size(); k++)
-		if(cards[selectedCards.get(k)].rank() == "jack" && cards[selectedCards.get(k+1)].rank() == "queen" && cards[selectedCards.get(k+2)].rank() == "king"
-		|| cards[selectedCards.get(k)].rank() == "jack" && cards[selectedCards.get(k+1)].rank() == "king" && cards[selectedCards.get(k+2)].rank() == "queen"
-		|| cards[selectedCards.get(k)].rank() == "queen" && cards[selectedCards.get(k+1)].rank() == "king" && cards[selectedCards.get(k+2)].rank() == "jack"
-		|| cards[selectedCards.get(k)].rank() == "queen" && cards[selectedCards.get(k+1)].rank() == "jack" && cards[selectedCards.get(k+2)].rank() == "king"
-		|| cards[selectedCards.get(k)].rank() == "king" && cards[selectedCards.get(k+1)].rank() == "jack" && cards[selectedCards.get(k+2)].rank() == "queen"
-		|| cards[selectedCards.get(k)].rank() == "king" && cards[selectedCards.get(k+1)].rank() == "queen" && cards[selectedCards.get(k+2)].rank() == "jack")
-			return true;
+		boolean jackPiece = false;
+		boolean queenPiece = false;
+		boolean kingPiece = false;
+		for (Integer cardCard: selectedCards) {
+			Card card = this.cardAt(cardCard);
+			if (card.rank().equals("jack")) jackPiece = true;
+			else if (card.rank().equals("queen")) queenPiece = true;
+			else if (card.rank().equals("king")) kingPiece = true;
+		}
+		if (jackPiece && queenPiece && kingPiece) return true;
 		else 
 			return false;
-			/* *** TO BE IMPLEMENTED IN EXPERIMENT03 *** */
-      return true;
+
 	}
    
 }
